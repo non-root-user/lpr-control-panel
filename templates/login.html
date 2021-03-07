@@ -2,13 +2,16 @@
 
 {% block title %}Dupaaaa{% endblock %}
 {% block style %}
-        <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='base.css') }} />
         <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='login.css') }} />
     {% endblock %}
+
 
 {% block content %}
     <form method="POST" id="login_form">
         <div>
+            {% if error %}
+                <p id="error">{{ error }}</p>
+            {% endif %}
             <input type="text" name="username" placeholder="User" required><span></span>
             <input type="password" name="password" placeholder="Password" required><span></span>
             <input type="submit" value="Log in">

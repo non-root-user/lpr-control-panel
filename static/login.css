@@ -56,3 +56,7 @@
     background: rgba(255, 255, 255, .125);
     outline: 0;
 }
+
+#error {
+    color: red;
+}
