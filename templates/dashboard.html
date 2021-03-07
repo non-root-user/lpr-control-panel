@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block style %}
+        <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='dashboard.css') }} />
+    {% endblock %}
+
+
+{% block content %}
+<div id="panels">
+    {% if 'hello_panel' in panels %}
+        <div class="base_panel">
+            Hello
+        </div>
+    {% endif %}
+    {% if 'manage_songs' in panels %}
+        <div class="base_panel">
+            Songs
+        </div>
+    {% endif %}
+    {% if 'manage_users' in panels %}
+        <div class="base_panel">
+            Users
+        </div>
+    {% endif %}
+
+
+</div>   
+{% endblock %}

@@ -1,0 +1,28 @@
+#panels {
+    width: 75%;
+    height: 70%;
+    background: rgb(51, 58, 88);
+    box-shadow: 5px 5px 10px rgba(0, 0, 15, .5);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#panels .base_panel {
+    height: 145px;
+    width: 145px;
+    text-align: center;
+    line-height: 145px;
+    display: inline-block;
+    vertical-align: top;
+    background: rgba(0, 0, 0, .2);
+    transition: all ease .2s;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 18px;
+}
+
+#panels .base_panel:hover, #panels .base_panel:active {
+    background: rgba(0, 0, 0, .1);
+}

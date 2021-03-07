@@ -3,6 +3,7 @@
     <title>{% block title %}{% endblock %}</title>
     {% block style %}{% endblock %}
     <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='base.css') }} />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <div id="nav">

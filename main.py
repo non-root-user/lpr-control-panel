@@ -19,15 +19,20 @@ try:
 except mysql.connector.Error as err:
     print(err)
 
+all_panels = ['hello_panel','manage_songs','manage_users']
+
 #@app.before_request
-#check if request timed out
-#def session_timeout():
-    
 
 @app.route('/')
 def index():
-    if 'username' in session:
-        return 'Logged in as {} with permissions {}'.format(session['username'], session['permissions'])
+    if 'username' in session and (session['permissions'] & 1):
+
+        allowed_panels = []
+        for i in range(len(all_panels)):
+            if session['permissions'] & 2^(i-1):
+                allowed_panels.append(all_panels[i-1])
+
+        return render_template('dashboard.html', panels=allowed_panels)
     return redirect(url_for('login'))
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -51,10 +56,8 @@ def login():
             session.permanent = True
             app.permanent_session_lifetime = 3600
             return redirect(url_for('index'))
-            #return '<h2>Username: {}<br>Hashed Pass: {}<br>Test Pass: {}<br>Is correct: {}</h2>'.format(username,hash_pass,test_pass,isIdentified)
-
+            
         
-        #return '<center><h1>Username: {}</h1><br><h1>Password: {}</h1></center>'.format(username, hash_pass)
         return render_template('login.html', error="Username or password incorrect.")
 
     return render_template('login.html')
