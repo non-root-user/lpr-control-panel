@@ -7,10 +7,10 @@
     {% endblock %}
 
 {% block content %}
-    <form id="login_form">
+    <form method="POST" id="login_form">
         <div>
-            <input type="text" placeholder="User"><span></span>
-            <input type="password" placeholder="Password"><span></span>
+            <input type="text" name="username" placeholder="User" required><span></span>
+            <input type="password" name="password" placeholder="Password" required><span></span>
             <input type="submit" value="Log in">
         </div>
     </form>
