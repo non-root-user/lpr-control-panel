@@ -1,0 +1,17 @@
+<!doctype html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block style %}
+        <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='base.css') }} />
+    {% endblock %}
+</head>
+<body>
+    <div id="nav">
+        <img src={{ url_for('static', filename='favicon.png') }}/>
+    </div>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    
+</body>
+

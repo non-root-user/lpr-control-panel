@@ -1,0 +1,28 @@
+body {
+    background: #445;
+}
+
+#nav {
+    height: 90px;
+    line-height: 90px;
+    vertical-align: middle;
+    width: 100%;
+    position: fixed;
+    top: 0; left: 0;
+    background: rgb(51, 58, 88);
+    box-shadow: 5px 0 10px rgba(0, 0, 0, .25);
+}
+
+#nav img {
+    width: auto;
+    height: 64px;
+    transition: all ease .2s;
+    vertical-align: middle;
+    transform: translateY(-5px);
+    margin-left: 10px;
+}
+
+#nav img:hover, #nav img:active {
+    height: 72px;
+    transform: rotate(-15deg) translateY(-5px);
+}
