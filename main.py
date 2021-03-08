@@ -6,6 +6,7 @@ import mysql.connector
 import bcrypt
 import string
 import random
+import sys
 
 app = Flask(__name__)
 #this generates a fresh session key every time the program restarts
@@ -18,6 +19,7 @@ try:
     )
 except mysql.connector.Error as err:
     print(err)
+    sys.exit(1)
 
 all_panels = ['hello_panel','manage_songs','manage_users']
 
@@ -62,5 +64,11 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/manage_users')
+def manage_users():
+    if 'username' in session and (session['permissions'] & 4):
+        return
+
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5111)
