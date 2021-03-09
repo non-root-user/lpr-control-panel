@@ -2,12 +2,16 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     {% block style %}{% endblock %}
-    <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='base.css') }} />
+    <link rel="stylesheet" type="text/css" media="all" href="{{ url_for('static', filename='base.css') }}" />
+    <script type="text/javascript" src="{{ url_for('static', filename='error.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <div id="nav">
         <img src={{ url_for('static', filename='favicon.png') }}/>
+        {% block logout %}
+        <button id="logout_button" onclick="javascript:window.open('{{ url_for('logout') }}')">Logout</button>
+        {% endblock %}
     </div>
     <div id="content">
         {% block content %}{% endblock %}

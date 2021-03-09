@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, abort
 from config import Config
 from mysql.connector import errorcode
 from datetime import timedelta
@@ -83,6 +83,13 @@ def login():
 def manage_users():
     if 'username' in session and (session['permissions'] & 4):
         return
+    abort(401)
+
+@app.route('/logout')
+def logout():
+    if 'username' in session:
+        session.pop('username', None)
+    return redirect(url_for('login'))
 
 
 if __name__ == "__main__":

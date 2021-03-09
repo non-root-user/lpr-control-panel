@@ -26,3 +26,35 @@ body {
     height: 72px;
     transform: rotate(-15deg) translateY(-5px);
 }
+
+#logout_button {
+    position: absolute;
+    top: 50%; right: 15px;
+    transform: translateY(-50%);
+}
+
+#error {
+    display: none;
+    position: fixed;
+    top: 35%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: #722;
+    color: #eee;
+    text-align: center;
+    transition: all ease .2s;
+    animation: errorPop .5s forwards;
+ }
+ @keyframes errorPop {
+    from {
+       opacity: 0;
+       transform: translate(-50%, -50%) scale(.6);
+    }
+    75% {
+       opacity: .7;
+       transform: translate(-50%, -50%) scale(1.05);
+    }
+    to {
+       opacity: 1;
+       transform: translate(-50%, -50%) scale(1);
+    }
+ }
