@@ -23,6 +23,21 @@ except mysql.connector.Error as err:
 
 all_panels = ['hello_panel','manage_songs','manage_users']
 
+cur = db.cursor()
+cur.execute('SELECT * FROM ponies')
+if not cur.fetchall() and Config.admin_enabled:
+    print('''
+There are no users present in the database, and admin_enabled is set to True
+Creating the default admin...
+Please, either delete the admin account, or change its password after you're done with the configuration.
+You can disable this option in config.py.
+    ''')
+    #this will generate an admin account and give it maximum privilages based on number of panels implemented
+    admin_query = ['admin', bcrypt.hashpw(Config.admin_pass.encode('utf-8'), bcrypt.gensalt()).decode("utf-8"), (2**(len(all_panels)) - 1)]
+    print(('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*admin_query)))
+    cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*admin_query))
+    db.commit()
+
 #@app.before_request
 
 @app.route('/')
