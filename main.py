@@ -53,7 +53,7 @@ def index():
     return redirect(url_for('login'))
 
 @app.route('/login', methods = ['GET', 'POST'])
-def login():
+def login(error = ""):
     if request.method == 'POST':
         cur = db.cursor()
         username = db._cmysql.escape_string(request.form.get('username')).decode()
@@ -77,7 +77,7 @@ def login():
         
         return render_template('login.html', error="Username or password incorrect.")
 
-    return render_template('login.html')
+    return render_template('login.html', error=error)
 
 @app.route('/manage_users')
 def manage_users():
@@ -91,6 +91,9 @@ def logout():
         session.pop('username', None)
     return redirect(url_for('login'))
 
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('not_found.html'), 404
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5111)

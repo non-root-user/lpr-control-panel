@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}404 kittens in a basket{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='not_found.css') }} />
+{% endblock %}
+
+{% block logout %}{% endblock %}
+{% block content %}
+<div id="not_found">
+    <h1>404</h1>
+    <h2>You have found a secret cat stash!</h2>
+    <h3>Wait, was that not what You're looking for?</h3>
+    <p>It's dangerous to go alone, take a kitty to guide your further journeys</p>
+</div>
+{% endblock %}
