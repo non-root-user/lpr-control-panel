@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="nav">
-        <img src={{ url_for('static', filename='favicon.png') }}/>
+        <a href={{ url_for('index') }}><img src={{ url_for('static', filename='favicon.png') }}/></a>
         {% block logout %}
         <button id="logout_button" onclick="javascript:window.open('{{ url_for('logout') }}')">Logout</button>
         {% endblock %}
