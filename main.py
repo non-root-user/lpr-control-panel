@@ -7,6 +7,7 @@ import bcrypt
 import string
 import random
 import sys
+from api import api as api
 
 app = Flask(__name__)
 #this generates a fresh session key every time the program restarts
@@ -34,7 +35,6 @@ You can disable this option in config.py.
     ''')
     #this will generate an admin account and give it maximum privilages based on number of panels implemented
     admin_query = ['admin', bcrypt.hashpw(Config.admin_pass.encode('utf-8'), bcrypt.gensalt()).decode("utf-8"), (2**(len(all_panels)) - 1)]
-    print(('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*admin_query)))
     cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*admin_query))
     db.commit()
 
@@ -94,6 +94,8 @@ def logout():
 @app.errorhandler(404)
 def not_found(error):
     return render_template('not_found.html'), 404
+
+api(app, session, db)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5111)
