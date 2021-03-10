@@ -52,8 +52,8 @@ def index():
 
         allowed_panels = []
         for i in range(len(all_panels)):
-            if session['permissions'] & 2^(i-1):
-                allowed_panels.append(all_panels[i-1])
+            if session['permissions'] & 2**i:
+                allowed_panels.append(all_panels[i])
 
         return render_template('dashboard.html', panels=allowed_panels)
     return redirect(url_for('login'))
