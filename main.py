@@ -40,6 +40,12 @@ You can disable this option in config.py.
 
 #@app.before_request
 
+@app.route('/manage_users')
+def manage_users():
+    if 'username' in session and (session['permissions'] & 4):
+        return render_template('manage_users.html')
+    abort(401)
+
 @app.route('/')
 def index():
     if 'username' in session and (session['permissions'] & 1):
@@ -79,12 +85,6 @@ def login(error = ""):
 
     return render_template('login.html', error=error)
 
-@app.route('/manage_users')
-def manage_users():
-    if 'username' in session and (session['permissions'] & 4):
-        return
-    abort(401)
-
 @app.route('/logout')
 def logout():
     if 'username' in session:
@@ -98,4 +98,4 @@ def not_found(error):
 api(app, session, db)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5111)
+    app.run(host='0.0.0.0', port=5111, debug=True)

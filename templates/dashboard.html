@@ -19,9 +19,10 @@
         </div>
     {% endif %}
     {% if 'manage_users' in panels %}
-        <div class="base_panel">
-            Users
-        </div>
+        <a href='{{url_for('manage_users')}}'>
+        <div class="base_panel" id="manage_users">
+        Users
+        </div></a>
     {% endif %}
 
 

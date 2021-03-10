@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block style %}
+        <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='manage_users.css') }} />
+    {% endblock %}
+
+
+{% block content %}
+<div>   
+    <div id="add_user_form">
+        <input type="text" class="add_user_input" id="username" placeholder="Username">
+        <input type="password" class="add_user_input" id="password" placeholder="Password">
+        <input type="password" class="add_user_input" id="password_check" placeholder="Type the password again">
+        <input type="number" class="add_user_input" id="permission_level" placeholder="Permissions">
+
+        <button id="add_user_btn">Add test user</button>
+    </div>
+    <script>
+        add_user_btn.onclick = () => {
+            if(password.value === password_check.value){
+                if(!isNaN(permission_level.value) && (permission_level.value & 1)){
+                    fetch('{{ url_for('add_user') }}', {
+                        method: 'POST',
+                        mode: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                           username: username.value,
+                           password: password.value,
+                           permission_level: permission_level.value
+                        })
+                    });
+                }
+                else showError("Invalid permission value")
+            }
+            else showError("Passwords do not match")  
+        }
+    </script>
+
+</div>   
+{% endblock %}
