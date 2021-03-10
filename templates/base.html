@@ -10,7 +10,7 @@
     <div id="nav">
         <a href={{ url_for('index') }}><img src={{ url_for('static', filename='favicon.png') }}/></a>
         {% block logout %}
-        <button id="logout_button" onclick="javascript:window.open('{{ url_for('logout') }}')">Logout</button>
+        <button id="logout_button" onclick="javascript:location.href='{{ url_for('logout') }}'">Logout</button>
         {% endblock %}
     </div>
     <div id="content">
