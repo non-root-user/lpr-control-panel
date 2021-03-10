@@ -12,8 +12,12 @@ def api(app, session, db):
     @app.route('/api/ponies/<page>', methods=['GET'])
     def list_users(page):
         if 'username' in session and (session['permissions'] & 4):
+            try:
+                page = int(page)
+            except:
+                abort(400)
             cur = db.cursor()
-            cur.execute("SELECT id, username, permission_level FROM ponies LIMIT {},5;".format(page))
+            cur.execute("SELECT id, username, permission_level FROM ponies LIMIT {},5;".format(page * 5))
             result = cur.fetchall()
             response = []
             for n in result:
