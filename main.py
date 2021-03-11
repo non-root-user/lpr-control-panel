@@ -62,11 +62,11 @@ def index():
 def login(error = ""):
     if request.method == 'POST':
         cur = db.cursor()
-        username = db._cmysql.escape_string(request.form.get('username')).decode()
+        username = db._cmysql.escape_string(request.form.get('username')).decode().lower()
         plain_pass = request.form.get('password').encode('utf-8')
         hash_pass = bcrypt.hashpw(plain_pass, bcrypt.gensalt())
 
-        cur.execute("SELECT permission_level, password FROM ponies WHERE username = '{}'".format(username))
+        cur.execute("SELECT permission_level, password FROM ponies WHERE lower(username) = '{}'".format(username))
         user_info = cur.fetchone()
         print(user_info)
         if user_info != None:

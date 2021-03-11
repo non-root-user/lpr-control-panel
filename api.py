@@ -37,9 +37,10 @@ def api(app, session, db):
         if 'username' in session and (session['permissions'] & 4):
             response = ast.literal_eval(request.data.decode())
             try:
-                username    = db._cmysql.escape_string(response["username"]).decode() 
-                password    = response['password']
-                permissions = response['permission_level']
+                username     = db._cmysql.escape_string(response["username"]).decode() 
+                password     = response['password']
+                permissions  = response['permission_level']
+                username_low = username.lower()
             except:
                 print("invalid request values")
                 abort(400)
@@ -55,7 +56,7 @@ def api(app, session, db):
                 print("invalid username length")
                 abort(400)
             cur = db.cursor()
-            cur.execute("SELECT id FROM ponies WHERE username = '{}';".format(username))
+            cur.execute("SELECT id FROM ponies WHERE lower(username) = '{}';".format(username_low))
             if cur.fetchall():
                 print("user with that name exists")
                 abort(400)
@@ -66,3 +67,4 @@ def api(app, session, db):
             print(response)
             return {'result':'200','message':'User added successfuly'}
         abort(401)
+
