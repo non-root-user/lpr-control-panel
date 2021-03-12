@@ -68,3 +68,20 @@ def api(app, session, db):
             return {'result':'200','message':'User added successfuly'}
         abort(401)
 
+    @app.route('/api/pony', methods=['DELETE'])
+    def delete_user():
+        if 'username' in session:
+            response = ast.literal_eval(request.data.decode())
+            try:
+                username     = db._cmysql.escape_string(response["username"]).decode()
+                username_low = username.lower()
+            except:
+                print("invalid request values")
+                abort(400)
+            print(session['username']+" "+username)
+            if (session['permissions'] & 4) or session['username'] == username:
+                cur = db.cursor()
+                cur.execute("DELETE FROM ponies WHERE lower(username) = '{}';".format(username_low))
+                return {'result':'200','message':'User deleted successfuly'}
+        print("authentication failed")
+        abort(403)
