@@ -37,7 +37,7 @@ def api(app, session, db):
         if 'username' in session and (session['permissions'] & 4):
             response = ast.literal_eval(request.data.decode())
             try:
-                username     = db._cmysql.escape_string(response["username"]).decode() 
+                username     = db._cmysql.escape_string(response["username"]).decode()
                 password     = response['password']
                 permissions  = response['permission_level']
                 username_low = username.lower()
@@ -48,6 +48,9 @@ def api(app, session, db):
             #Even numbers are accepted, but users with even permissions won't have access to anything, thus blocking their access
             if not permissions.isnumeric():
                 print("not numeric")
+                abort(400)
+            if any(not c.isalnum() for c in username_low.replace("_", "")):
+                print("username is not alphanumeric")
                 abort(400)
             if Config.min_password_length > len(password) or Config.max_password_length < len(password):
                 print("invalid pass length")
