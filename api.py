@@ -15,7 +15,7 @@ def api(app, session, db):
             try:
                 page = int(page)
             except:
-                abort(400)
+                page = 0
             cur = db.cursor()
             cur.execute("SELECT id, username, permission_level FROM ponies LIMIT {},5;".format(page * 5))
             result = cur.fetchall()
@@ -29,7 +29,6 @@ def api(app, session, db):
 
     @app.route('/api/ponies', methods=['GET'])
     def list_some_users():
-        print(list_users(0))
         return list_users(0)
 
     @app.route('/api/pony', methods=['POST'])
@@ -88,3 +87,26 @@ def api(app, session, db):
                 return {'result':'200','message':'User deleted successfuly'}
         print("authentication failed")
         abort(403)
+
+    @app.route('/api/songs/<page>', methods=['GET'])
+    def list_songs(page):
+        if 'username' in session and (session['permissions'] & 2):
+            try:
+                page = int(page)
+            except:
+                page = 0
+            cur = db.cursor()
+            cur.execute("SELECT * FROM songs LIMIT {},5;".format(page * 5))
+            result = cur.fetchall()
+            response = []
+            for n in result:
+                k = list(n)
+                response.append({"id": n[0], "artist": n[1], "title": n[2], "fs_filename": n[3],
+                 "audio_format": n[4], "genre": n[5], "date_released": n[6], "album_name": n[7], "fs_album_cover": n[8]})
+            print(response)
+            return {'songs':response}
+        return abort(401)
+        
+    @app.route('/api/songs', methods=['GET'])
+    def list_some_songs(page):
+        return list_songs(0)
