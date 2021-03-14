@@ -66,7 +66,7 @@ def api(app, session, db):
 
             print(response)
             return {'result':'200','message':'User added successfuly'}, 200
-        abort(401)
+        return {'result':'401','message':'Authentication failed'}, 401
 
     @app.route('/api/pony', methods=['DELETE'])
     def delete_user():
@@ -82,9 +82,33 @@ def api(app, session, db):
             if (session['permissions'] & 4) or session['username'] == username:
                 cur = db.cursor()
                 cur.execute("DELETE FROM ponies WHERE lower(username) = '{}';".format(username_low))
+                db.commit()
                 return {'result':'200','message':'User deleted successfuly'}
-        print("authentication failed")
-        abort(403)
+        return {'result':'401','message':'Authentication failed'}, 401
+
+    @app.route('/api/pony', methods=['PUT'])
+    def modify_user():
+        if 'username' in session and (session['permissions'] & 4):
+            response = ast.literal_eval(request.data.decode())
+            try:
+                username     = db._cmysql.escape_string(response["username"]).decode()
+                permissions  = response['permission_level']
+                username_low = username.lower()
+            except:
+                return {'result':'400','message':'Invalid request values'}, 400
+            try:
+                if not permissions.isnumeric():
+                    return {'result':'400','message':'Permissions are not numeric'}, 400
+            except:
+                pass
+            cur = db.cursor()
+            cur.execute("SELECT id FROM ponies WHERE lower(username) = '{}';".format(username_low))
+            if not cur.fetchall():
+                return {'result':'400','message':'User with that name does not exist'}, 400
+            cur.execute("UPDATE ponies SET permission_level = {} WHERE lower(username) = '{}';".format(permissions, username_low))
+            db.commit()
+            return {'result':'200','message':'User modified succesfully'}, 200
+        return {'result':'401','message':'Authentication failed'}, 401
 
     @app.route('/api/songs/<page>', methods=['GET'])
     def list_songs(page):
@@ -103,7 +127,7 @@ def api(app, session, db):
                  "audio_format": n[4], "genre": n[5], "date_released": n[6], "album_name": n[7], "fs_album_cover": n[8]})
             print(response)
             return {'songs':response}
-        return abort(401)
+        return {'result':'401','message':'Authentication failed'}, 401
         
     @app.route('/api/songs', methods=['GET'])
     def list_some_songs(page):
