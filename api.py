@@ -17,7 +17,7 @@ def api(app, session, db):
             except:
                 page = 0
             cur = db.cursor()
-            cur.execute("SELECT id, username, permission_level FROM ponies LIMIT {},5;".format(page * 5))
+            cur.execute("SELECT id, username, permission_level FROM ponies LIMIT {},15;".format(page * 15))
             result = cur.fetchall()
             response = []
             for n in result:
