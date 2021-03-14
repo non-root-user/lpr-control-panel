@@ -42,32 +42,30 @@ def api(app, session, db):
                 username_low = username.lower()
             except:
                 print("invalid request values")
-                abort(400)
+                return {'result':'400','message':'Invalid request values'}, 400
             #This will accept only positive numbers, regardless of the value.
             #Even numbers are accepted, but users with even permissions won't have access to anything, thus blocking their access
-            if not permissions.isnumeric():
-                print("not numeric")
-                abort(400)
+            try:
+                if not permissions.isnumeric():
+                    return {'result':'400','message':'Permissions are not numeric'}, 400
+            except:
+                pass
             if any(not c.isalnum() for c in username_low.replace("_", "")):
-                print("username is not alphanumeric")
-                abort(400)
+                return {'result':'400','message':'Username is not alphanumeric'}, 400
             if Config.min_password_length > len(password) or Config.max_password_length < len(password):
-                print("invalid pass length")
-                abort(400)
+                return {'result':'400','message':'Invalid password length'}, 400
             if Config.min_username_length > len(username) or Config.max_username_length < len(username):
-                print("invalid username length")
-                abort(400)
+                return {'result':'400','message':'Invalid username length'}, 400
             cur = db.cursor()
             cur.execute("SELECT id FROM ponies WHERE lower(username) = '{}';".format(username_low))
             if cur.fetchall():
-                print("user with that name exists")
-                abort(400)
+                return {'result':'400','message':'User with that name exists'}, 400
             values = [username, bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode("utf-8"), permissions]
             cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*values))
             db.commit()
 
             print(response)
-            return {'result':'200','message':'User added successfuly'}
+            return {'result':'200','message':'User added successfuly'}, 200
         abort(401)
 
     @app.route('/api/pony', methods=['DELETE'])
@@ -96,7 +94,7 @@ def api(app, session, db):
             except:
                 page = 0
             cur = db.cursor()
-            cur.execute("SELECT * FROM songs LIMIT {},5;".format(page * 5))
+            cur.execute("SELECT * FROM songs LIMIT {},5;".format(page * 15))
             result = cur.fetchall()
             response = []
             for n in result:

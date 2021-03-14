@@ -1,64 +1,33 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}User Management Dashboard{% endblock %}
 {% block style %}
         <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='manage_users.css') }} />
+        <script>
+            add_user_url    = '{{ url_for('add_user') }}'
+            delete_user_url = '{{ url_for('delete_user') }}'
+        </script>
+        <script type="text/javascript" src={{ url_for('static', filename='manage_users.js') }} ></script>
     {% endblock %}
 
 
 {% block content %}
+
 <div>   
     <div id="add_user_form">
         <input type="text" class="add_user_input" id="add_username" placeholder="Username">
         <input type="password" class="add_user_input" id="add_password" placeholder="Password">
         <input type="password" class="add_user_input" id="add_password_check" placeholder="Type the password again">
-        <input type="number" class="add_user_input" id="add_permission_level" placeholder="Permissions">
+        <input type="checkbox" class="add_user_input" class="permission_select" perm="2">Manage Songs<br>
+        <input type="checkbox" class="add_user_input" class="permission_select" perm="4">Manage Users<br>
 
-        <button id="add_user_btn">Add test user</button>
+        <button id="add_user_btn">Add a new user</button>
     </div>
-    <script>
-        add_user_btn.onclick = () => {
-            if(add_password.value === add_password_check.value){
-                if(!isNaN(add_permission_level.value) && (add_permission_level.value & 1)){
-                    fetch('{{ url_for('add_user') }}', {
-                        method: 'POST',
-                        mode: 'same-origin',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                           username: add_username.value,
-                           password: add_password.value,
-                           permission_level: add_permission_level.value
-                        })
-                    });
-                }
-                else showError("Invalid permission value")
-            }
-            else showError("Passwords do not match")  
-        }
-    </script>
 
     <div id="delete_user_form">
         <input type="text" class="delete_user_input" id="del_username" placeholder="User to delete">
         <button id="del_user_btn">Delete a user</button>
     </div>
-    <script>
-        del_user_btn.onclick = () => {
-        
-            fetch('{{ url_for('delete_user') }}', {
-                method: 'DELETE',
-                mode: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: del_username.value,
-                })
-            });
-        }
-    </script>
-
 
 </div>   
 {% endblock %}

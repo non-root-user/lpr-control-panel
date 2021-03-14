@@ -46,6 +46,12 @@ def manage_users():
         return render_template('manage_users.html')
     abort(401)
 
+@app.route('/manage_songs')
+def manage_songs():
+    if 'username' in session and (session['permissions'] & 2):
+        return render_template('manage_songs.html')
+    abort(401)
+
 @app.route('/')
 def index():
     if 'username' in session and (session['permissions'] & 1):
