@@ -23,7 +23,6 @@ def api(app, session, db):
             for n in result:
                 k = list(n)
                 response.append({"id": n[0], "name": n[1], "permission_level": n[2]})
-            print(response)
             return {'users':response}
         return abort(401)
 
@@ -41,7 +40,6 @@ def api(app, session, db):
                 permissions  = response['permission_level']
                 username_low = username.lower()
             except:
-                print("invalid request values")
                 return {'result':'400','message':'Invalid request values'}, 400
             #This will accept only positive numbers, regardless of the value.
             #Even numbers are accepted, but users with even permissions won't have access to anything, thus blocking their access
@@ -64,7 +62,6 @@ def api(app, session, db):
             cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*values))
             db.commit()
 
-            print(response)
             return {'result':'200','message':'User added successfuly'}, 200
         return {'result':'401','message':'Authentication failed'}, 401
 
@@ -76,9 +73,7 @@ def api(app, session, db):
                 username     = db._cmysql.escape_string(response["username"]).decode()
                 username_low = username.lower()
             except:
-                print("invalid request values")
-                abort(400)
-            print(session['username']+" "+username)
+                return {'result':'400','message':'Invalid request values'}, 400
             if (session['permissions'] & 4) or session['username'] == username:
                 cur = db.cursor()
                 cur.execute("DELETE FROM ponies WHERE lower(username) = '{}';".format(username_low))
@@ -125,7 +120,6 @@ def api(app, session, db):
                 k = list(n)
                 response.append({"id": n[0], "artist": n[1], "title": n[2], "fs_filename": n[3],
                  "audio_format": n[4], "genre": n[5], "date_released": n[6], "album_name": n[7], "fs_album_cover": n[8]})
-            print(response)
             return {'songs':response}
         return {'result':'401','message':'Authentication failed'}, 401
         

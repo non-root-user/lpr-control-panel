@@ -74,7 +74,6 @@ def login(error = ""):
 
         cur.execute("SELECT permission_level, password FROM ponies WHERE lower(username) = '{}'".format(username))
         user_info = cur.fetchone()
-        print(user_info)
         if user_info != None:
             test_pass = bcrypt.hashpw(plain_pass, user_info[1].encode('utf-8'))
             isIdentified = (user_info[1].encode('utf-8') == test_pass)
