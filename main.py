@@ -8,6 +8,7 @@ import string
 import random
 import sys
 from api import api as api
+from database_init import initialize_the_database
 
 app = Flask(__name__)
 #this generates a fresh session key every time the program restarts
@@ -22,6 +23,7 @@ except mysql.connector.Error as err:
     print(err)
     sys.exit(1)
 
+initialize_the_database(db)
 all_panels = ['hello_panel','manage_songs','manage_users']
 
 cur = db.cursor()
@@ -44,13 +46,13 @@ You can disable this option in config.py.
 def manage_users():
     if 'username' in session and (session['permissions'] & 4):
         return render_template('manage_users.html')
-    abort(401)
+    abort(404)
 
 @app.route('/manage_songs')
 def manage_songs():
     if 'username' in session and (session['permissions'] & 2):
         return render_template('manage_songs.html')
-    abort(401)
+    abort(404)
 
 @app.route('/')
 def index():
