@@ -7,10 +7,12 @@ import bcrypt
 import string
 import random
 import sys
+import logging
 from api import api as api
 from database_init import initialize_the_database
 
 app = Flask(__name__)
+logging.basicConfig(filename='access.log', level=logging.INFO, format=f'%(message)s')
 #this generates a fresh session key every time the program restarts
 session_secret = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(32))
 app.secret_key = session_secret
@@ -83,9 +85,13 @@ def login(error = ""):
                 return render_template('login.html', error="Username or password incorrect.")
             session['username'] = username
             session['permissions'] = user_info[0]
+
+            user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr) if Config.use_reverse_proxy else request.remote_addr
+            app.logger.info('IP: {} logged in as user: {}'.format(user_ip, username))
             session.permanent = True
             app.permanent_session_lifetime = 3600
             return redirect(url_for('index'))
+            
             
         
         return render_template('login.html', error="Username or password incorrect.")

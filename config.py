@@ -13,3 +13,5 @@ class Config:
     max_username_length = 16
     min_password_length = 6
     max_password_length = 64
+
+    use_reverse_proxy = False
