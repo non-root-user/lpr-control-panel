@@ -1,5 +1,6 @@
 from flask import abort, request
 from config import Config
+from helper import audit_log
 import bcrypt
 import ast
 
@@ -62,6 +63,7 @@ def api(app, session, db):
             cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*values))
             db.commit()
 
+            audit_log('Added a new user {} with permissions {}'.format(username, permissions), session, request)
             return {'result':'200','message':'User added successfuly'}, 200
         return {'result':'401','message':'Authentication failed'}, 401
 
@@ -78,6 +80,7 @@ def api(app, session, db):
                 cur = db.cursor()
                 cur.execute("DELETE FROM ponies WHERE lower(username) = '{}';".format(username_low))
                 db.commit()
+                audit_log('Removed user {} '.format(username), session, request)
                 return {'result':'200','message':'User deleted successfuly'}
         return {'result':'401','message':'Authentication failed'}, 401
 
@@ -97,11 +100,13 @@ def api(app, session, db):
             except:
                 pass
             cur = db.cursor()
-            cur.execute("SELECT id FROM ponies WHERE lower(username) = '{}';".format(username_low))
+            cur.execute("SELECT permission_level FROM ponies WHERE lower(username) = '{}';".format(username_low))
             if not cur.fetchall():
                 return {'result':'400','message':'User with that name does not exist'}, 400
+            old = cur.fetchone()
             cur.execute("UPDATE ponies SET permission_level = {} WHERE lower(username) = '{}';".format(permissions, username_low))
             db.commit()
+            audit_log('Modified user {}, changed permissions from {} to {}'.format(username, old, permissions), session, request)
             return {'result':'200','message':'User modified succesfully'}, 200
         return {'result':'401','message':'Authentication failed'}, 401
 
