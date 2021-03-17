@@ -22,8 +22,8 @@ try:
 except mysql.connector.Error as err:
     print(err)
     sys.exit(1)
-
 initialize_the_database(db)
+
 all_panels = ['hello_panel','manage_songs','manage_users']
 
 cur = db.cursor()
