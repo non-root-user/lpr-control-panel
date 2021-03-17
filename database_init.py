@@ -7,6 +7,7 @@ def initialize_the_database(db):
         username            VARCHAR(128) NOT NULL UNIQUE,
         password            VARCHAR(128) NOT NULL,
         avatar              MEDIUMBLOB,
+        email               VARCHAR(128) UNIQUE,
         discord_tag         VARCHAR(128),
         register_ip         VARCHAR(128),
         register_date       INT(64),
