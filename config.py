@@ -15,3 +15,6 @@ class Config:
     max_password_length = 64
 
     use_reverse_proxy = False
+
+    do_audit_log = True
+    log_path = ""
