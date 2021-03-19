@@ -1,13 +1,8 @@
+import mysql.connector, bcrypt, string, random, sys, logging
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 from config import Config
 from mysql.connector import errorcode
 from datetime import timedelta
-import mysql.connector
-import bcrypt
-import string
-import random
-import sys
-import logging
 from api import api as api
 from database_init import initialize_the_database
 from helper import audit_log
