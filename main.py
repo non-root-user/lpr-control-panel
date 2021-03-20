@@ -105,7 +105,7 @@ def logout():
 def not_found(error):
     return render_template('not_found.html'), 404
 
-api(app, session, db)
+api.initialize(app, session, db)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5111, debug=True)
