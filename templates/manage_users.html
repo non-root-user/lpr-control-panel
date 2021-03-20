@@ -18,10 +18,20 @@
         <input type="text" class="add_user_input" id="add_username" placeholder="Username">
         <input type="password" class="add_user_input" id="add_password" placeholder="Password">
         <input type="password" class="add_user_input" id="add_password_check" placeholder="Type the password again">
-        <input type="checkbox" class="add_user_input" class="permission_select" perm="2">Manage Songs<br>
-        <input type="checkbox" class="add_user_input" class="permission_select" perm="4">Manage Users<br>
+        <input type="checkbox" class="add_user_input permission_select" perm="2">Manage Songs<br>
+        <input type="checkbox" class="add_user_input permission_select" perm="4">Manage Users<br>
 
         <button id="add_user_btn">Add a new user</button>
+    </div>
+
+    <div id="modify_user_form">
+        <div id="modify_user_form_exit">x</div>
+        <div id="modify_user_info"></div>
+        <input type="checkbox" class="modify_user_input permission_modify" perm="2">Manage Songs<br>
+        <input type="checkbox" class="modify_user_input permission_modify" perm="4">Manage Users<br>
+        <input type="checkbox" class="modify_user_input permission_modify" perm="1">Blocked<br>
+
+        <button id="modify_user_btn">Change permissions</button> <!-- :) -->
     </div>
 
     <div id="user_list">

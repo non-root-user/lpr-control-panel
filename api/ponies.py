@@ -57,10 +57,11 @@ def ponies(app, session, db):
                 return {'result':'400','message':'User with that name exists'}, 400
             values = [username, bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode("utf-8"), permissions]
             cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*values))
+            new_user_id = cur.lastrowid
             db.commit()
 
             audit_log('Added a new user {} with permissions {}'.format(username, permissions), session, request)
-            return {'result':'200','message':'User added successfuly'}, 200
+            return {'result':'200','message':'User added successfuly', 'id':new_user_id}, 200
         return {'result':'401','message':'Authentication failed'}, 401
 
     @app.route('/api/pony', methods=['DELETE'])
@@ -97,17 +98,23 @@ def ponies(app, session, db):
                 pass
             cur = db.cursor()
             cur.execute("SELECT permission_level FROM ponies WHERE lower(username) = '{}';".format(username_low))
-            if not cur.fetchall():
+            old = cur.fetchone()[0]
+            if not old:
                 return {'result':'400','message':'User with that name does not exist'}, 400
-            old = cur.fetchone()
             cur.execute("UPDATE ponies SET permission_level = {} WHERE lower(username) = '{}';".format(permissions, username_low))
             db.commit()
             audit_log('Modified user {}, changed permissions from {} to {}'.format(username, old, permissions), session, request)
-            return {'result':'200','message':'User modified succesfully'}, 200
+            return {'result':'200','message':'User modified successfully'}, 200
         return {'result':'401','message':'Authentication failed'}, 401
 
     @app.route('/api/password', methods=['PUT'])
     def change_password():
         if 'username' in session and (session['permissions'] & 1):
-            return
+            response = ast.literal_eval(request.data.decode())
+            try:
+                username     = db._cmysql.escape_string(response["username"]).decode()
+                permissions  = response['password']
+                username_low = username.lower()
+            except:
+                return {'result':'400','message':'Invalid request values'}, 400
         return
