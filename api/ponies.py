@@ -8,7 +8,7 @@ def ponies(app, session, db):
 
     @app.route('/api/ponies/<page>', methods=['GET'])
     def list_users(page):
-        if 'username' in session and (session['permissions'] & 4):
+        if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
             try:
                 page = int(page)
             except:
@@ -29,7 +29,7 @@ def ponies(app, session, db):
 
     @app.route('/api/pony', methods=['POST'])
     def add_user():
-        if 'username' in session and (session['permissions'] & 4):
+        if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
             response = ast.literal_eval(request.data.decode())
             try:
                 username     = db._cmysql.escape_string(response["username"]).decode()
@@ -82,7 +82,7 @@ def ponies(app, session, db):
 
     @app.route('/api/pony', methods=['PUT'])
     def modify_user():
-        if 'username' in session and (session['permissions'] & 4):
+        if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
             response = ast.literal_eval(request.data.decode())
             try:
                 username     = db._cmysql.escape_string(response["username"]).decode()
@@ -105,3 +105,9 @@ def ponies(app, session, db):
             audit_log('Modified user {}, changed permissions from {} to {}'.format(username, old, permissions), session, request)
             return {'result':'200','message':'User modified succesfully'}, 200
         return {'result':'401','message':'Authentication failed'}, 401
+
+    @app.route('/api/password', methods=['PUT'])
+    def change_password():
+        if 'username' in session and (session['permissions'] & 1):
+            return
+        return
