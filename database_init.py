@@ -27,7 +27,8 @@ def initialize_the_database(db):
         genre               VARCHAR(64),
         date_released       VARCHAR(32),
         album_name          VARCHAR(64),
-        fs_album_cover      VARCHAR(256)
+        fs_album_cover      VARCHAR(256),
+        is_public           INT(2)
     ); 
     ''')
     db.commit()
