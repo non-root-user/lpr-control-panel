@@ -115,7 +115,7 @@ def ponies(app, session, db):
             try:
                 if session['permissions'] & 4:
                     try:
-                        username = db._cmysql.escape_string(response["username"]).decode()
+                        username = db._cmysql.escape_string(response["username"]).decode().lower()
                     except:
                         username = session['username']
                 else:
@@ -126,6 +126,9 @@ def ponies(app, session, db):
                 return {'result':'400','message':'Invalid request values'}, 400
             hash_pass = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode("utf-8")
             cur = db.cursor()
+            if not cur.execute("SELECT id FROM ponies WHERE lower(username) = '{}';".format(username_low)):
+                return {'result': '400', 'message': 'User with that username does not exist'}, 400
             cur.execute("UPDATE ponies SET password = {} WHERE lower(username) = '{}';".format(hash_pass, username_low))
+            db.commit()
             return {'result': 200, 'message':'Password changed successfully'}, 200
         return {'result':'401','message':'Authentication failed'}, 401
