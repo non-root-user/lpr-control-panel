@@ -22,7 +22,7 @@ def songs(app, session, db):
         return {'result':'401','message':'Authentication failed'}, 401
         
     @app.route('/api/songs', methods=['GET'])
-    def list_some_songs(page):
+    def list_some_songs():
         return list_songs(0)
 
     @app.route('/api/song/<id>', methods=['GET'])
