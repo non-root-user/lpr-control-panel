@@ -113,7 +113,13 @@ def ponies(app, session, db):
         if 'username' in session and (session['permissions'] & 1):
             response = ast.literal_eval(request.data.decode())
             try:
-                username     = session['username']
+                if session['permissions'] & 4:
+                    try:
+                        username = db._cmysql.escape_string(response["username"]).decode()
+                    except:
+                        username = session['username']
+                else:
+                    username     = session['username']
                 password     = response['password']
                 username_low = username.lower()
             except:
