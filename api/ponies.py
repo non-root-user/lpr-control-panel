@@ -38,8 +38,9 @@ def ponies(app, session, db):
                 username_low = username.lower()
             except:
                 return {'result':'400','message':'Invalid request values'}, 400
-            #This will accept only positive numbers, regardless of the value.
-            #Even numbers are accepted, but users with even permissions won't have access to anything, thus blocking their access
+            # This will accept only positive numbers, regardless of the value.
+            # Even numbers are accepted, but users with even permissions won't have access to anything,
+            # thus blocking their access
             try:
                 if not permissions.isnumeric():
                     return {'result':'400','message':'Permissions are not numeric'}, 400
@@ -112,9 +113,13 @@ def ponies(app, session, db):
         if 'username' in session and (session['permissions'] & 1):
             response = ast.literal_eval(request.data.decode())
             try:
-                username     = db._cmysql.escape_string(response["username"]).decode()
-                permissions  = response['password']
+                username     = session['username']
+                password     = response['password']
                 username_low = username.lower()
             except:
                 return {'result':'400','message':'Invalid request values'}, 400
-        return
+            hash_pass = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode("utf-8")
+            cur = db.cursor()
+            cur.execute("UPDATE ponies SET password = {} WHERE lower(username) = '{}';".format(hash_pass, username_low))
+            return {'result': 200, 'message':'Password changed successfully'}, 200
+        return {'result':'401','message':'Authentication failed'}, 401
