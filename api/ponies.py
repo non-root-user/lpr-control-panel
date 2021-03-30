@@ -56,6 +56,8 @@ def ponies(app, session, db):
             cur.execute("SELECT id FROM ponies WHERE lower(username) = '{}';".format(username_low))
             if cur.fetchall():
                 return {'result':'400','message':'User with that name exists'}, 400
+            if permissions < 0:
+                return {'result': '400', 'message': 'Invalid permission value'}, 400
             values = [username, bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode("utf-8"), permissions]
             cur.execute('INSERT INTO ponies (username, password, permission_level) VALUES (\'{}\', \'{}\', {});'.format(*values))
             new_user_id = cur.lastrowid
