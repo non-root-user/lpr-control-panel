@@ -7,7 +7,10 @@ def audit_log(message, session, request):
     timestamp = time.strftime("%d.%m.%Y %H:%M:%S")
     path = Config.log_path
     user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr) if Config.use_reverse_proxy else request.remote_addr
-    username = session['username']
+    try:
+        username = session['username']
+    except:
+        username = '__null__'
     logname = path + 'audit_' + time.strftime("%Y-%m-%d")
     logline = '[ {} ] {} {} | '.format(timestamp, user_ip, username) + message
 

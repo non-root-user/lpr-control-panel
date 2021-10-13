@@ -32,7 +32,7 @@ def ponies(app, session, db):
         if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
             response = ast.literal_eval(request.data.decode())
             try:
-                username = db._cmysql.escape_string(response["username"]).decode()
+                username = db.converter.escape(response["username"])
                 password = response['password']
                 permissions = response['permission_level']
                 username_low = username.lower()
@@ -73,7 +73,7 @@ def ponies(app, session, db):
         if 'username' in session:
             response = ast.literal_eval(request.data.decode())
             try:
-                username = db._cmysql.escape_string(response["username"]).decode()
+                username = db.converter.escape(response["username"])
                 username_low = username.lower()
             except:
                 return {'result': '400', 'message': 'Invalid request values'}, 400
@@ -90,7 +90,7 @@ def ponies(app, session, db):
         if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
             response = ast.literal_eval(request.data.decode())
             try:
-                username = db._cmysql.escape_string(response["username"]).decode()
+                username = db.converter.escape(response["username"])
                 permissions = response['permission_level']
                 username_low = username.lower()
             except:
@@ -120,7 +120,7 @@ def ponies(app, session, db):
             try:
                 if session['permissions'] & 4:
                     try:
-                        username = db._cmysql.escape_string(response["username"]).decode().lower()
+                        username = db.converter.escape(response["username"]).lower()
                     except:
                         username = session['username']
                 else:

@@ -75,7 +75,7 @@ def index():
 def login(error=""):
     if request.method == 'POST':
         cur = db.cursor()
-        username = db._cmysql.escape_string(request.form.get('username')).decode().lower()
+        username = db.converter.escape(request.form.get('username')).lower()
         plain_pass = request.form.get('password').encode('utf-8')
 
         cur.execute("SELECT permission_level, password FROM ponies WHERE lower(username) = '{}'".format(username))
@@ -95,6 +95,7 @@ def login(error=""):
             session.permanent = True
             app.permanent_session_lifetime = 3600
             return redirect(url_for('index'))
+        audit_log('Unsuccessful login attempt for user {}'.format(username), session, request)
         return render_template('login.html', error="Username or password incorrect.")
     return render_template('login.html', error=error)
 
