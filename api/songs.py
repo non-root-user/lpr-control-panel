@@ -64,3 +64,20 @@ def songs(app, session, db):
                                  "album_name": n[7], "fs_album_cover": n[8]})
             return {'songs': response}
         return {'result': '401', 'message': 'Authentication failed'}, 401
+
+    @app.route('/api/songs/albumart/<song_id>', methods=['GET'])
+    def get_coverart(song_id):
+        if 'username' in session and (session['permissions'] & 1):
+            audit_log('tried getting the cover of ' + song_id, session, request)
+            try:
+                song_id = int(song_id)
+            except:
+                return {'result': '400', 'message': 'Invalid id'}, 400
+            cur = db.cursor()
+            cur.execute("SELECT * FROM albumarts WHERE id = '{}';".format(song_id))
+            cover = cur.fetchone()
+            if not cover:
+                return {'result': '400', 'message': 'Song with that id does not exist, or the song has no cover art attached'}, 400
+            return cover[1], 200, {'Content-Type': 'image/png'}
+
+        return {'result': '401', 'message': 'Authentication failed'}, 401
