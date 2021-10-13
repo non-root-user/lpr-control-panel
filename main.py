@@ -108,7 +108,8 @@ def logout():
 
 
 @app.errorhandler(404)
-def not_found():
+#Flask pushes an error message as the first argument, x prevents it from crashing due to oversaturation
+def not_found(x):
     return render_template('not_found.html'), 404
 
 
