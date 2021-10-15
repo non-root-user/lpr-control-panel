@@ -14,9 +14,10 @@
         </div>
     {% endif %}
     {% if 'manage_songs' in panels %}
-        <div class="base_panel">
+        <a href='{{url_for('manage_songs')}}'>
+        <div class="base_panel" id="manage_songs">
             Songs
-        </div>
+        </div></a>
     {% endif %}
     {% if 'manage_users' in panels %}
         <a href='{{url_for('manage_users')}}'>

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Song Management Dashboard{% endblock %}
+{% block style %}
+        <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='manage_users.css') }} />
+        <script>
+            list_songs_url = '{{ url_for('list_some_songs') }}'
+            fetch(list_songs_url)
+            .then(res => res.json())
+            .then((out) => {
+                document.getElementById('inside').innerHTML = JSON.stringify(out);
+            })
+        </script>
+        <style>
+            #inside {
+                position:fixed;
+                top: 15%;
+                left: 10%;
+                color:beige;
+                width: 70%;
+                max-width: 75%;
+                float: left;
+                word-wrap: break-word;
+            }
+        </style>
+    {% endblock %}
+
+
+{% block content %}
+    
+    <div id="inside">
+    </div>
+
+
+
+{% endblock %}
