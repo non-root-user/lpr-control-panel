@@ -18,6 +18,9 @@ def initialize_the_database(db):
     ); 
     ''')
     db.commit()
+
+    #This is a legacy database structure. fs_album_cover is not used, instead images are pulled from a separate table.
+    #It's there for backwards compatibility when pulling from an old database.
     cur.execute('''CREATE TABLE IF NOT EXISTS songs (
         id                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         artist              VARCHAR(128) NOT NULL,
