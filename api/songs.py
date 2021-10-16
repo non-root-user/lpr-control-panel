@@ -79,8 +79,12 @@ def songs(app, session, db):
                 genre = db.converter.escape(response["genre"])
                 date_released = response["date_released"]
                 audio_file = base64.b64decode(response["audio_file"])
+                values = [title, artist, album_name, genre, date_released, audio_file]
             except:
                 return {'result': '400', 'message': 'Invalid request values'}, 400
+            for x in values:
+                if not x:
+                    return {'result': '400', 'message': 'Provided empty request values'}, 400
             filename = ",".join([artist, album_name, title + ".mp3"]).replace(" ", "_")
             file = open(Config.song_path + filename, 'wb+')
             file.write(audio_file)
