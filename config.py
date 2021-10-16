@@ -8,6 +8,8 @@ class Config:
     host = '0.0.0.0'
     port = 5112
 
+    song_path = 'songs/'
+
     admin_name = 'admin'
     admin_pass = 'password'
     admin_enabled = True

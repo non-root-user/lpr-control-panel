@@ -1,6 +1,8 @@
 from helper import audit_log
 from flask import request
+from config import Config
 import ast
+import base64
 
 
 def songs(app, session, db):
@@ -65,3 +67,35 @@ def songs(app, session, db):
                                  "album_name": n[7], "fs_album_cover": n[8]})
             return {'songs': response}
         return {'result': '401', 'message': 'Authentication failed'}, 401
+
+    @app.route('/api/song', methods=['POST'])
+    def add_song():
+        if 'username' in session and (session['permissions'] & 2) and (session['permissions'] & 1):
+            response = ast.literal_eval(request.data.decode())
+            try:
+                title = db.converter.escape(response["title"])
+                artist = db.converter.escape(response["artist"])
+                album_name = db.converter.escape(response["album_name"])
+                genre = db.converter.escape(response["genre"])
+                date_released = response["date_released"]
+                audio_file = base64.b64decode(response["audio_file"])
+            except:
+                return {'result': '400', 'message': 'Invalid request values'}, 400
+            filename = ",".join([artist, album_name, title + ".mp3"]).replace(" ", "_")
+            file = open(Config.song_path + filename, 'wb+')
+            file.write(audio_file)
+            file.close()
+            cur = db.cursor()
+            query_arr = [artist, title, filename, 'mp3', genre, date_released, album_name, 'placeholder']
+            cur.execute('''INSERT INTO songs 
+                (artist,title,fs_filename,audio_format,genre,date_released,album_name,fs_album_cover)
+                VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')'''.format(*query_arr))
+            db.commit()
+            cur.execute('SELECT LAST_INSERT_ID();')
+            new_id = cur.fetchone()
+            audit_log('added a song with id:' + new_id, session, request)
+            return {'result': '200', 'message': 'Song added succesfully', 'song_id': new_id}
+
+        return {'result': '401', 'message': 'Authentication failed'}, 401
+    #TODO fuzzy song search
+    #TODO audio file check, and proper reincoding according to the config
