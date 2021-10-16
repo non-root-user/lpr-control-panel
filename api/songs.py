@@ -1,6 +1,7 @@
 from helper import audit_log
 from flask import request
 from config import Config
+import os.path
 import ast
 import base64
 
@@ -86,6 +87,8 @@ def songs(app, session, db):
                 if not x:
                     return {'result': '400', 'message': 'Provided empty request values'}, 400
             filename = ",".join([artist, album_name, title + ".mp3"]).replace(" ", "_")
+            if os.path.isfile(Config.song_path + filename):
+                return {'result': '400', 'message': 'These song values are already occupied'}, 400
             file = open(Config.song_path + filename, 'wb+')
             file.write(audio_file)
             file.close()
@@ -98,7 +101,7 @@ def songs(app, session, db):
             cur.execute('SELECT LAST_INSERT_ID();')
             new_id = cur.fetchone()
             audit_log('added a song with id:' + new_id, session, request)
-            return {'result': '200', 'message': 'Song added succesfully', 'song_id': new_id}
+            return {'result': '201', 'message': 'Song added succesfully', 'song_id': new_id}, 201
 
         return {'result': '401', 'message': 'Authentication failed'}, 401
     #TODO fuzzy song search
