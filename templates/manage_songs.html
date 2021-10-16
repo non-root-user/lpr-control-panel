@@ -4,33 +4,179 @@
 {% block style %}
         <link rel="stylesheet" type="text/css" media="all" href={{ url_for('static', filename='manage_users.css') }} />
         <script>
-            list_songs_url = '{{ url_for('list_some_songs') }}'
-            fetch(list_songs_url)
-            .then(res => res.json())
-            .then((out) => {
-                document.getElementById('inside').innerHTML = JSON.stringify(out);
-            })
+            window.onload = () => {
+                id_bt.onclick = () => {
+                    if (!id_input.value) return;
+                    id_result.innerHTML = '';
+                    fetch("/api/song/" + id_input.value)
+                    .then(res => res.json())
+                    .then(async out => {
+                        let music_div = document.createElement('div');
+                        let music_cover_img = document.createElement('img');
+                        let music_info = document.createElement('div');
+                        let values = "<b>Title: </b><i>" + out.songs.title + "</i><br>" + 
+                            "<b>Artist: </b><i>" + out.songs.artist + "</i><br>" +
+                            "<b>Album: </b><i>" + out.songs.album_name + "</i><br>" +
+                            "<b>Date Released: </b><i>" + out.songs.date_released + "</i><br>" +
+                            "<b>Genre: </b><i>" + out.songs.genre + "</i><br>" +
+                            "<b>Filename: </b><i>" + out.songs.fs_filename + "</i><br>" +
+                            "<b>Id: </b><i>" + out.songs.id + "</i><br>" ;
+                        
+                        music_cover_img.setAttribute("src", "/api/song/albumart/" + id_input.value);
+                        music_cover_img.style.width = '256px';
+                        music_info.innerHTML = values;
+
+                        music_div.appendChild(music_cover_img);
+                        music_div.appendChild(music_info);
+
+                        id_result.appendChild(music_div);
+                    });
+                }
+                cover_bt.onclick = () => {
+                    if (!id_cover.value) return;
+                    if (cover_file.files.length == 0) return;
+                    let reader = new FileReader();
+                    reader.onload = async event => {
+                        let image64 = event.target.result.split(',')[1];
+                        let img_json = JSON.stringify({'image':image64});
+
+                        let response = await fetch('/api/song/albumart/' + id_cover.value, {method:'PUT',body:img_json});
+                        document.getElementById('cover_output').innerHTML = JSON.stringify(response);
+
+                    }
+                    reader.readAsDataURL(cover_file.files[0]);
+
+                }
+                song_bt.onclick = () => {
+                    if (!add_title.value) return;
+                    if (!add_artist.value) return;
+                    if (!add_album.value) return;
+                    if (!add_genre.value) return;
+                    if (!add_year.value) return;
+                    if (song_file.files.length == 0) return;
+
+                    let reader = new FileReader();
+                    reader.onload = async event => {
+                        let song64 = event.target.result.split(',')[1];
+                        let song_json = JSON.stringify({title:add_title.value,
+                            artist:add_artist.value,
+                            album_name:add_album.value,
+                            genre:add_genre.value,
+                            date_released:add_year.value,
+                            audio_file:song64});
+
+                        let response = await fetch('/api/song', {method:'POST',body:song_json});
+                        document.getElementById('song_output').innerHTML = JSON.stringify(response);
+
+                    }
+                    reader.readAsDataURL(song_file.files[0]);
+                }
+            }
         </script>
         <style>
-            #inside {
-                position:fixed;
-                top: 15%;
-                left: 10%;
+            #content{
+                position: fixed;
+                margin-top: 100px;
+            }
+            #id_search{
+                position: relative;
+                width:auto;
+                height:20%;
                 color:beige;
-                width: 70%;
-                max-width: 75%;
-                float: left;
                 word-wrap: break-word;
+                display: inline-block;
+                float:left;
+            }
+            #change_cover{
+                position: relative;
+                width:auto;
+                height:20%;
+                color:beige;
+                word-wrap: break-word;
+                display: inline-block;
+                float:left;
+            }
+            .panel {
+                position: relative;
+                padding: 40px 40px 100px 40px;
+                background: rgba(0, 0, 0, .1);
+                color: rgb(182, 182, 182);
+                font-family: sans-serif;
+                max-width: 250px;
+                margin: 10px;
+                margin-top: 0px;
+                box-shadow: rgba(34, 34, 34, 0.158) 2px 2px 10px;
+                display: inline-block;
+                vertical-align: top;
+                float:left;
+            }
+            .panel input {
+                display: block;
+                background: rgba(0, 0, 0, .1);
+                padding: 10px 30px;
+                color: #ddd;
+                border: none;
+            }
+            .panel button {
+                position: relative;
+                left: 50%;
+                margin-top: 20px;
+                transform: translateX(-50%);
+                min-width: 75%;
+                text-align: center;
+                font-weight: bold;
+                color: #eee;
+                background: rgba(0, 0, 0, .25);
+                border: none;
+                transition: all linear .5s;
+                box-shadow: #222 0 0 0;
+                padding: 15px 30px;
+                cursor: pointer;
+                margin-bottom: 20px;
+            }
+            .panel input:focus {
+                outline: 0;
+            }
+            .panel input[type=file]{
+                max-width: 76%;
+            }
+            .panel button:hover, .panel button:active {
+                box-shadow: #222 4px 4px 0;
+            }
+            b {
+                color:burlywood;
             }
         </style>
     {% endblock %}
 
 
 {% block content %}
-    
-    <div id="inside">
+
+    <div id="id_search" class="panel">
+        <p>Search song by id</p>
+        <input type="number" id="id_input" placeholder="song id"><button id="id_bt">Search</button>
+        <div id="id_result"></div>
     </div>
 
+    <div id="change_cover" class="panel">
+        <p>Change the cover</p>
+        <input type="number" id="id_cover" placeholder="song id"><br>
+        <input type="file" id="cover_file"><br>
+        <button id="cover_bt">Change</button>
+        <div id="cover_output"></div>
+    </div>
+
+    <div id="add_song" class="panel">
+        <p>Add a new song</p>
+        <input type="text", id="add_title" placeholder="song title"><br>
+        <input type="text", id="add_artist" placeholder="artist"><br>
+        <input type="text", id="add_album" placeholder="album"><br>
+        <input type="text", id="add_genre" placeholder="genre"><br>
+        <input type="number", id="add_year" placeholder="year of release"><br>
+        <input type="file", id="song_file"><br>
+        <button id="song_bt">Upload song</button>
+        <div id="song_output"></div>
+    </div>
 
 
 {% endblock %}
