@@ -17,7 +17,7 @@ def covers(app, session, db):
             cur.execute("SELECT * FROM albumarts WHERE id = '{}';".format(song_id))
             cover = cur.fetchone()
             if not cover:
-                return {'result': '400', 'message': 'Song with that id does not exist, or the song has no cover art attached'}, 400
+                return {'result': '404', 'message': 'Cover could not be found'}, 404
             return cover[1], 200, {'Content-Type': 'image/png'}
 
         return {'result': '401', 'message': 'Authentication failed'}, 401
@@ -29,6 +29,7 @@ def covers(app, session, db):
             try:
                 image = response['image']
                 image = base64.b64decode(image)
+                #TODO check if image is valid, and resize/reencode it to a static format before saving
             except:
                 audit_log('has tried to change the cover of ' + song_id, session, request)
                 return {'result': '400', 'message': 'Invalid image'}, 400
@@ -45,10 +46,10 @@ def covers(app, session, db):
                     audit_log('has tried to change the cover of ' + str(song_id), session, request)
                     return {'result': '400', 'message': 'Song with that id does not exist'}, 400
                 else:
-                    cur.execute("INSERT INTO albumarts (id, image) VALUES {}, {}';".format(song_id, image))
+                    cur.execute("INSERT INTO albumarts (id, image) VALUES (%s, %s) ;", (str(song_id), image))
                     db.commit()
                     audit_log('has changed the default cover of ' + str(song_id), session, request)
-                    return {'result': '200', 'message': 'Cover updated succesfully, new row has been created'}
+                    return {'result': '201', 'message': 'Cover updated succesfully, new row has been created'}, 201
             else:
                 cur.execute("UPDATE albumarts SET image = %s WHERE id = %s ;", (image, str(song_id)))
                 db.commit()
