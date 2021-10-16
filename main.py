@@ -108,12 +108,12 @@ def logout():
 
 
 @app.errorhandler(404)
-#Flask pushes an error message as the first argument, x prevents it from crashing due to oversaturation
-def not_found(x):
-    return render_template('not_found.html'), 404
 
+def not_found(_):
+    return render_template('not_found.html'), 404
+    
 
 api.initialize(app, session, db)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5111, debug=True)
+    app.run(host=Config.host, port=Config.port, debug=True)
