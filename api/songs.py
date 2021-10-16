@@ -100,7 +100,7 @@ def songs(app, session, db):
             db.commit()
             cur.execute('SELECT LAST_INSERT_ID();')
             new_id = cur.fetchone()
-            audit_log('added a song with id:' + new_id, session, request)
+            audit_log('added a song with id:' + ''.join(str(x) for x in new_id), session, request)
             return {'result': '201', 'message': 'Song added succesfully', 'song_id': new_id}, 201
 
         return {'result': '401', 'message': 'Authentication failed'}, 401
