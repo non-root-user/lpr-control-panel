@@ -1,6 +1,7 @@
 from helper import audit_log
 from flask import request
 import base64
+import ast
 
 
 def songs(app, session, db):
@@ -99,19 +100,21 @@ def songs(app, session, db):
                 audit_log('has tried to change the cover of ' + song_id, session, request)
                 return {'result': '400', 'message': 'Invalid id'}, 400
             cur = db.cursor()
-            if not cur.execute("SELECT id FROM albumarts WHERE id = '{}';".format(song_id)):
-                if not cur.execute("SELECT id FROM songs WHERE id = '{}';".format(song_id)):
-                    audit_log('has tried to change the cover of ' + song_id, session, request)
+            cur.execute("SELECT id FROM albumarts WHERE id = '{}';".format(song_id))
+            if not cur.fetchone():
+                cur.execute("SELECT id FROM songs WHERE id = '{}';".format(song_id))
+                if not cur.fetchone():
+                    audit_log('has tried to change the cover of ' + str(song_id), session, request)
                     return {'result': '400', 'message': 'Song with that id does not exist'}, 400
                 else:
-                    cur.execute("INSERT INTO albumarts (id, image) VALUES';".format(song_id, image))
+                    cur.execute("INSERT INTO albumarts (id, image) VALUES {}, {}';".format(song_id, image))
                     db.commit()
-                    audit_log('has changed the default cover of ' + song_id, session, request)
+                    audit_log('has changed the default cover of ' + str(song_id), session, request)
                     return {'result': '200', 'message': 'Cover updated succesfully, new row has been created'}
             else:
-                cur.execute("UPDATE albumarts SET image = {} WHERE id = '{}';".format(image, song_id))
+                cur.execute("UPDATE albumarts SET image = %s WHERE id = %s ;", (image, str(song_id)))
                 db.commit()
-                audit_log('has changed the cover of ' + song_id, session, request)
+                audit_log('has changed the cover of ' + str(song_id), session, request)
                 return {'result': '200', 'message': 'Cover updated succesfully!'}
             
         return {'result': '401', 'message': 'Authentication failed'}, 401
