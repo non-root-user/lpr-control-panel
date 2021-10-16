@@ -1,5 +1,6 @@
 from . import ponies
 from . import songs
+from . import covers
 
 
 def initialize(app, session, db):
@@ -10,3 +11,4 @@ def initialize(app, session, db):
 
     ponies.ponies(app, session, db)
     songs.songs(app, session, db)
+    covers.covers(app, session, db)
