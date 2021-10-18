@@ -7,18 +7,24 @@ window.onload = () => {
         .then(res => res.json())
         .then(async out => {
             let music_div = document.createElement('div');
-            let music_cover_img = document.createElement('img');
+            var music_cover_img = document.createElement('img');
             let music_info = document.createElement('div');
-            let values = "<b>Title: </b><i>" + out.songs.title + "</i><br>" + 
-                "<b>Artist: </b><i>" + out.songs.artist + "</i><br>" +
-                "<b>Album: </b><i>" + out.songs.album_name + "</i><br>" +
-                "<b>Date Released: </b><i>" + out.songs.date_released + "</i><br>" +
-                "<b>Genre: </b><i>" + out.songs.genre + "</i><br>" +
-                "<b>Filename: </b><i>" + out.songs.fs_filename + "</i><br>" +
-                "<b>Id: </b><i>" + out.songs.id + "</i><br>" ;
+            if(out.hasOwnProperty('message')){
+                var values = out.message;
+                music_cover_img = document.createElement('div');
+            }
+            else{
+                var values = "<b>Title: </b><i>" + out.songs.title + "</i><br>" + 
+                    "<b>Artist: </b><i>" + out.songs.artist + "</i><br>" +
+                    "<b>Album: </b><i>" + out.songs.album_name + "</i><br>" +
+                    "<b>Date Released: </b><i>" + out.songs.date_released + "</i><br>" +
+                    "<b>Genre: </b><i>" + out.songs.genre + "</i><br>" +
+                    "<b>Filename: </b><i>" + out.songs.fs_filename + "</i><br>" +
+                    "<b>Id: </b><i>" + out.songs.id + "</i><br>" ;
             
-            music_cover_img.setAttribute("src", "/api/song/albumart/" + id_input.value);
-            music_cover_img.style.width = '256px';
+                music_cover_img.setAttribute("src", "/api/song/albumart/" + id_input.value);
+                music_cover_img.style.width = '256px';
+            }
             music_info.innerHTML = values;
 
             music_div.appendChild(music_cover_img);
