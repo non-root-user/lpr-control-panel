@@ -45,8 +45,8 @@ def songs(app, session, db):
             song = cur.fetchone()
 
             if not song:
-                return {'result': '400', 'message':
-                        'Song with that id does not exist'}, 400
+                return {'result': '404', 'message':
+                        'Song with that id does not exist'}, 404
             response = {"id": song[0], "artist": song[1], "title": song[2],
                         "fs_filename": song[3], "audio_format": song[4],
                         "genre": song[5], "date_released": song[6],
@@ -151,8 +151,8 @@ def songs(app, session, db):
             song = cur.fetchone()
 
             if not song:
-                return {'result': '400', 'message':
-                        'Song with that id does not exist'}, 400
+                return {'result': '404', 'message':
+                        'Song with that id does not exist'}, 404
 
         cur.execute("DELETE FROM songs WHERE id = {}".format(song_id))
         cur.execute("DELETE FROM albumarts WHERE id = {}".format(song_id))
@@ -175,8 +175,8 @@ def songs(app, session, db):
             song = cur.fetchone()
 
             if not song:
-                return {'result': '400', 'message':
-                        'Song with that id does not exist'}, 400
+                return {'result': '404', 'message':
+                        'Song with that id does not exist'}, 404
             if not response:
                 return {'result': '400', 'message':
                         'No values to change were given'}, 400
