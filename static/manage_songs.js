@@ -1,5 +1,6 @@
 
 window.onload = () => {
+
     id_bt.onclick = () => {
         if (!id_input.value) return;
         id_result.innerHTML = '';
@@ -11,7 +12,6 @@ window.onload = () => {
             let music_info = document.createElement('div');
             if(out.hasOwnProperty('message')){
                 var values = out.message;
-                music_cover_img = document.createElement('div');
             }
             else{
                 var values = "<b>Title: </b><i>" + out.songs.title + "</i><br>" + 
@@ -24,11 +24,56 @@ window.onload = () => {
             
                 music_cover_img.setAttribute("src", "/api/song/albumart/" + id_input.value);
                 music_cover_img.style.width = '256px';
+
+                var edit_button = document.createElement('button');
+                edit_button.setAttribute("id", "edit_bt");
+                edit_button.setAttribute("class", "inside_buttons");
+                edit_button.innerHTML = "Edit";
+                var delete_button = document.createElement('button');
+                delete_button.setAttribute("id", "delete_bt");
+                delete_button.setAttribute("class", "inside_buttons");
+                delete_button.addEventListener('click', () => {
+
+                    let blur = document.createElement('div');
+                    blur.setAttribute("id", "blur");
+                    music_div.appendChild(blur);
+                    blur.addEventListener('click', () => {
+                        document.getElementById("blur").outerHTML = "";
+                    });
+                    var warning = document.createElement('div');
+                    warning.setAttribute("class", "panel popup");
+                    warning.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                    })
+                    warning.innerHTML = "Are you sure you want to delete this song?"
+
+                    let confirm_bt = document.createElement('button');
+                    confirm_bt.innerHTML = "Delete";
+                    confirm_bt.setAttribute("id", "delete_bt");
+                    confirm_bt.setAttribute("class", "inside_buttons");
+                    confirm_bt.addEventListener('click', async () => {
+                        let response = await fetch('/api/song/' + out.songs.id, {method:'DELETE'});
+                        warning.innerHTML = "<b>" + (await response.json()).message + "</b>";
+                    });
+                    
+                    blur.appendChild(warning);
+                    warning.appendChild(confirm_bt);
+
+                });
+                delete_button.innerHTML = "Delete";
+
             }
             music_info.innerHTML = values;
 
-            music_div.appendChild(music_cover_img);
-            music_div.appendChild(music_info);
+            if(!out.hasOwnProperty('message')){
+                music_div.appendChild(music_cover_img);
+                music_div.appendChild(music_info);
+                music_div.appendChild(edit_button);
+                music_div.appendChild(delete_button);
+            }
+            else{
+                music_div.appendChild(music_info);
+            }
 
             id_result.appendChild(music_div);
         });

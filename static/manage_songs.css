@@ -58,6 +58,35 @@
     cursor: pointer;
     margin-bottom: 20px;
 }
+.inside_buttons.inside_buttons {
+    min-width: 20%;
+    left: 20%;
+    margin: 5%;
+}
+#delete_bt{
+    background: rgba(170, 24, 24, 0.61);
+}
+#blur {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    background: rgba(61,61,76,255);
+    box-shadow: #222 4px 4px 0;
+    color: beige;
+}
 .panel input:focus {
     outline: 0;
 }
