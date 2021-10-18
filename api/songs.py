@@ -65,8 +65,8 @@ def songs(app, session, db):
 
             clean_search = db.converter.escape(search)
             cur = db.cursor()
-            query = '''SELECT * FROM songs WHERE 
-                CONCAT(artist,title,album_name) LIKE '{}' 
+            query = '''SELECT * FROM songs WHERE
+                CONCAT(artist,title,album_name) LIKE '{}'
                 ORDER BY title ASC LIMIT 0,50;'''.format(clean_search)
             cur.execute(query)
             result = cur.fetchall()
@@ -104,7 +104,7 @@ def songs(app, session, db):
 
             filename = ",".join([artist, album_name, title + ".mp3"]).replace(" ", "_")
             if os.path.isfile(Config.song_path + filename):
-                return {'result': '400', 'message': 'These song values are already occupied'}, 400
+                return {'result': '409', 'message': 'These song values are already occupied'}, 409
 
             file = open(Config.song_path + filename, 'wb+')
             file.write(audio_file)
@@ -132,7 +132,7 @@ def songs(app, session, db):
             except:
                 return {'result': '400', 'message': 'Invalid id'}, 400
 
-            cur = cur = db.cursor()
+            cur = db.cursor()
             cur.execute("SELECT * FROM songs WHERE id = '{}';".format(song_id))
             song = cur.fetchone()
 
@@ -145,6 +145,62 @@ def songs(app, session, db):
 
         return {'result': '401', 'message': 'Authentication failed'}, 401
 
-    #TODO fuzzy song search
-    #TODO audio file check, and proper reincoding according to the config
-    #TODO edit song info
+
+    @app.route('/api/song/<song_id>', methods=['PUT'])
+    def edit_song_info(song_id):
+        if 'username' in session and (session['permissions'] & 2) and (session['permissions'] & 1):
+            try:
+                song_id = int(song_id)
+            except:
+                return {'result': '400', 'message': 'Invalid id'}, 400
+
+            response = ast.literal_eval(request.data.decode())
+            cur = db.cursor()
+            song = cur.fetchone()
+
+            if not song:
+                return {'result': '400', 'message': 'Song with that id does not exist'}, 400
+            if not response:
+                return {'result': '400', 'message': 'No values to change were given'}, 400
+            
+            try:
+                allowed_keys = ['title','artist','album_name','genre','date_released','audio_file']
+                query = "UPDATE songs SET "
+                changes = []
+
+                for key, value in response.items():
+                    if key not in allowed_keys:
+                        return {'result': '400', 'message':
+                                key + ' is not a changable value'}, 400
+
+                    if key == 'audio_file':
+                        filename = Config.song_path + song.get('fs_filename')
+                        value = base64.b64decode(value)
+                        file = open(Config.song_path + filename, 'wb+')
+                        file.write(value)
+                        file.close()
+                        changes.append("File has been changed")
+                    else:
+                        value = db.converter.escape(value)
+                        query += "{}={}, ".format(key, value)
+                        changes.append(song.get(key) + " -> " + value)
+
+                query = (query + "WHERE id={};").rstrip(',')
+                cur.execute(query)
+                db.commit()
+                changes_str = ', '.join(changes)
+                log_msg = "Info for song id:{} have changed: {}".format(song_id, changes_str)
+                audit_log(log_msg, session, request)
+
+            except IOError as err:
+                audit_log("Could not save a file when updating song info: {}".format(str(err)), session, request)
+                return {'result': '500', 'message': 'The server encountered an error when saving the song file'}, 500
+            except Exception as err:
+                audit_log(str(err), session, request)
+                return {'result': '400', 'message': 'Request values are not permissible'}, 400
+
+    # TODO fuzzy song search
+    # TODO audio file check, and proper reincoding according to the config
+    # TODO edit song info
+    # TODO verbose audit log for deleting and editing
+    # TODO error log as a separate function and a separate file
