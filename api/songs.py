@@ -154,9 +154,11 @@ def songs(app, session, db):
                 return {'result': '404', 'message':
                         'Song with that id does not exist'}, 404
 
-        cur.execute("DELETE FROM songs WHERE id = {}".format(song_id))
-        cur.execute("DELETE FROM albumarts WHERE id = {}".format(song_id))
-        db.commit()
+            cur.execute("DELETE FROM songs WHERE id = {}".format(song_id))
+            cur.execute("DELETE FROM albumarts WHERE id = {}".format(song_id))
+            db.commit()
+            return {'result': '200', 'message': 'Song id:' + str(song_id) +
+                    ' deleted successfully'}, 200
 
         return {'result': '401', 'message': 'Authentication failed'}, 401
 
@@ -225,3 +227,4 @@ def songs(app, session, db):
     # TODO edit song info
     # TODO verbose audit log for deleting and editing
     # TODO error log as a separate function and a separate file
+    # TODO separate access log, for things like getting a cover
