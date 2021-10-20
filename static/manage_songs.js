@@ -29,6 +29,56 @@ window.onload = () => {
                 edit_button.setAttribute("id", "edit_bt");
                 edit_button.setAttribute("class", "inside_buttons");
                 edit_button.innerHTML = "Edit";
+
+                edit_button.addEventListener('click', () => {
+
+                    let blur = document.createElement('div');
+                    blur.setAttribute("id", "blur");
+                    music_div.appendChild(blur);
+                    blur.addEventListener('click', () => {
+                        document.getElementById("blur").outerHTML = "";
+                    });
+                    var edit_panel = document.createElement('div');
+                    edit_panel.setAttribute("class", "panel popup");
+                    edit_panel.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                    })
+                    edit_panel.innerHTML = "Edit";
+
+                    //I absolutely hate this chunk of code, will purge the hell out of it whenever i get the chance
+                    let current_cover = music_cover_img.cloneNode(false);
+                    let edit_title = document.createElement('input');
+                        edit_title.setAttribute('placeholder', 'song title');
+                        edit_title.setAttribute('id', 'edit_title');
+                    let edit_artist = document.createElement('input');
+                        edit_artist.setAttribute('placeholder', 'artist');
+                        edit_artist.setAttribute('id', 'edit_artist');
+                    let edit_album = document.createElement('input');
+                        edit_album.setAttribute('placeholder', 'album');
+                        edit_album.setAttribute('id', 'edit_album');
+                    let edit_genre = document.createElement('input');
+                        edit_genre.setAttribute('placeholder', 'genre');
+                        edit_genre.setAttribute('id', 'edit_genre');
+                    let edit_date = document.createElement('input');
+                        edit_date.setAttribute('placeholder', 'year of release');
+                        edit_date.setAttribute('type', 'number');
+                        edit_date.setAttribute('id', 'edit_date');
+                    let edit_file = document.createElement('input');
+                        edit_file.setAttribute('type', 'file');
+                        edit_file.setAttribute('id', 'edit_file');
+
+                    let confirm_bt = document.createElement('button');
+                        confirm_bt.setAttribute("class", "inside_buttons");
+                        confirm_bt.innerHTML = 'Confirm'
+
+                    confirm_bt.addEventListener('click', () => {
+                        console.log('test');
+                    });
+
+                    blur.appendChild(edit_panel);
+                    edit_panel.append(current_cover, edit_title, edit_artist, edit_album, edit_genre, edit_date, edit_file, confirm_bt);
+                });
+
                 var delete_button = document.createElement('button');
                 delete_button.setAttribute("id", "delete_bt");
                 delete_button.setAttribute("class", "inside_buttons");
@@ -116,3 +166,9 @@ window.onload = () => {
         reader.readAsDataURL(song_file.files[0]);
     }
 }
+
+// TODO put all big functions into a separate place, for better readability
+// TODO make all variable names consistant, try to use camelCase in js
+// TODO make quote marks consistant
+// TODO truncate redundant code, for the love of god, make this file smaller
+// TODO never write any more frontend
