@@ -40,6 +40,7 @@ window.onload = () => {
                     });
                     var edit_panel = document.createElement('div');
                     edit_panel.setAttribute("class", "panel popup");
+                    //edit_panel.classList.remove("disappear"); // makes sure the panel is visible by overriding display:none
                     edit_panel.addEventListener('click', (event) => {
                         event.stopPropagation();
                     })
@@ -72,7 +73,33 @@ window.onload = () => {
                         confirm_bt.innerHTML = 'Confirm'
 
                     confirm_bt.addEventListener('click', () => {
-                        console.log('test');
+                        if (!Boolean(edit_title.value + edit_artist.value + edit_album.value + edit_genre.value + edit_date.value) + (edit_file.files.length != 0)){
+                            //TODO notify the user that nothing is filled in
+                        }
+                        else {
+                            let diff_panel = document.createElement('div');
+                            diff_panel.setAttribute('id', 'diff_panel');
+                            diff_panel.setAttribute("class", "panel popup");
+                            edit_panel.classList.add("disappear");
+                            diff_panel.style.display = "block";
+                            diff_panel.innerHTML = "Changes made:";
+                            diff_panel.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                            });
+                            blur.appendChild(diff_panel);
+                            let changes_before = document.createElement('div');
+                            let changes_after = document.createElement('div');
+                            let accept_bt = document.createElement('button');
+                                accept_bt.innerHTML = 'Accept changes';
+                            let back_bt = document.createElement('button');
+                                back_bt.innerHTML = 'Cancel';
+                                back_bt.addEventListener('click', () => {
+                                    edit_panel.classList.remove('disappear');
+                                    document.getElementById('diff_panel').outerHTML = "";
+                                });
+
+                            diff_panel.append(changes_before, changes_after, accept_bt, back_bt)
+                        }
                     });
 
                     blur.appendChild(edit_panel);
@@ -172,3 +199,5 @@ window.onload = () => {
 // TODO make quote marks consistant
 // TODO truncate redundant code, for the love of god, make this file smaller
 // TODO never write any more frontend
+// TODO clicking on the cover while in edit mode should allow a new cover to be uploaded
+// TODO image preview when uploading a cover
