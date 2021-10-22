@@ -77,6 +77,8 @@ window.onload = () => {
                             //TODO notify the user that nothing is filled in
                         }
                         else {
+                            let change_values = {'title': edit_title.value, 'artist': edit_artist.value, 'album_name': edit_album.value,
+                                'genre': edit_genre.value, 'date_released': edit_date.value, 'song_file': edit_file.files.length};
                             let diff_panel = document.createElement('div');
                             diff_panel.setAttribute('id', 'diff_panel');
                             diff_panel.setAttribute("class", "panel popup");
@@ -89,10 +91,19 @@ window.onload = () => {
                             blur.appendChild(diff_panel);
                             let changes_before = document.createElement('div');
                             let changes_after = document.createElement('div');
+                            for(c in change_values){
+                                if(!Boolean(change_values[c])){
+                                    continue;
+                                }
+                                changes_before.insertAdjacentHTML('beforeend', '<p>' + c + ': ' + out.songs[c] + '</p>');
+                                changes_after.insertAdjacentHTML('beforeend', '<p>' + c + ': ' + change_values[c] + '</p>');
+                            }
                             let accept_bt = document.createElement('button');
                                 accept_bt.innerHTML = 'Accept changes';
+                                accept_bt.classList.add('inside_buttons');
                             let back_bt = document.createElement('button');
                                 back_bt.innerHTML = 'Cancel';
+                                back_bt.classList.add('inside_buttons');
                                 back_bt.addEventListener('click', () => {
                                     edit_panel.classList.remove('disappear');
                                     document.getElementById('diff_panel').outerHTML = "";
