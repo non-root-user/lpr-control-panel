@@ -1,6 +1,17 @@
 
 window.onload = () => {
 
+    function remove_blur(){
+        document.getElementById("blur").outerHTML = "";
+    }
+
+    function go_back_blur(){
+        document.getElementById("edit_panel").classList.remove('disappear');
+        document.getElementById('diff_panel').outerHTML = "";
+        document.getElementById("blur").addEventListener('click', remove_blur);
+        document.getElementById("blur").removeEventListener('click', go_back_blur);
+    }
+
     id_bt.onclick = () => {
         if (!id_input.value) return;
         id_result.innerHTML = '';
@@ -35,10 +46,9 @@ window.onload = () => {
                     let blur = document.createElement('div');
                     blur.setAttribute("id", "blur");
                     music_div.appendChild(blur);
-                    blur.addEventListener('click', () => {
-                        document.getElementById("blur").outerHTML = "";
-                    });
+                    blur.addEventListener('click', remove_blur);
                     var edit_panel = document.createElement('div');
+                    edit_panel.setAttribute('id', 'edit_panel');
                     edit_panel.setAttribute("class", "panel popup");
                     //edit_panel.classList.remove("disappear"); // makes sure the panel is visible by overriding display:none
                     edit_panel.addEventListener('click', (event) => {
@@ -88,6 +98,10 @@ window.onload = () => {
                             diff_panel.addEventListener('click', (event) => {
                                 event.stopPropagation();
                             });
+
+                            blur.removeEventListener('click', remove_blur);
+                            blur.addEventListener('click', go_back_blur);
+
                             blur.appendChild(diff_panel);
                             let changes_made = document.createElement('table');
                                 changes_made.insertAdjacentHTML('beforeend', '<tr> <th></th> <th>Before</th> <th>After</th> </tr>');
