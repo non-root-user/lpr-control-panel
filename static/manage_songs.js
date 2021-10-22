@@ -46,6 +46,13 @@ window.onload = () => {
                     let blur = document.createElement('div');
                     blur.setAttribute("id", "blur");
                     music_div.appendChild(blur);
+                    document.body.onkeydown = (e) => {
+                        if(document.getElementById('blur')){
+                            if (e.key === "Escape"){
+                                remove_blur();
+                            }
+                        }
+                    };
                     blur.addEventListener('click', remove_blur);
                     var edit_panel = document.createElement('div');
                     edit_panel.setAttribute('id', 'edit_panel');
