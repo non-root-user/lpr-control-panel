@@ -74,7 +74,6 @@
     z-index: 1;
 }
 .popup {
-    position: fixed;
     top: 50%;
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
@@ -100,4 +99,26 @@ b {
 
 .disappear {
     display: none;
+}
+
+#diff_panel {
+    max-width: unset;
+}
+
+#diff_table {
+    text-align: left;
+}
+
+#diff_panel button{
+    left: 10%;
+}
+
+#diff_table tr, #diff_table td, #diff_table th{
+    padding: 5px;
+    margin: 5px;
+    min-width: 200px;
+}
+
+#diff_table th, #diff_table td:nth-child(1){
+    background-color: rgba(0, 0, 0, .25);
 }

@@ -89,15 +89,16 @@ window.onload = () => {
                                 event.stopPropagation();
                             });
                             blur.appendChild(diff_panel);
-                            let changes_before = document.createElement('div');
-                            let changes_after = document.createElement('div');
+                            let changes_made = document.createElement('table');
+                                changes_made.insertAdjacentHTML('beforeend', '<tr> <th></th> <th>Before</th> <th>After</th> </tr>');
+                                changes_made.setAttribute('id', 'diff_table');
                             for(c in change_values){
                                 if(!Boolean(change_values[c])){
                                     continue;
                                 }
-                                changes_before.insertAdjacentHTML('beforeend', '<p>' + c + ': ' + out.songs[c] + '</p>');
-                                changes_after.insertAdjacentHTML('beforeend', '<p>' + c + ': ' + change_values[c] + '</p>');
+                                changes_made.insertAdjacentHTML('beforeend', `<tr> <td><b>${c}</b></td> <td>${out.songs[c]}</td> <td>${change_values[c]}</td> </tr>`);
                             }
+                                //changes_made.insertAdjacentHTML('beforeend', '</tr>')
                             let accept_bt = document.createElement('button');
                                 accept_bt.innerHTML = 'Accept changes';
                                 accept_bt.classList.add('inside_buttons');
@@ -109,7 +110,7 @@ window.onload = () => {
                                     document.getElementById('diff_panel').outerHTML = "";
                                 });
 
-                            diff_panel.append(changes_before, changes_after, accept_bt, back_bt)
+                            diff_panel.append(changes_made, accept_bt, back_bt)
                         }
                     });
 
