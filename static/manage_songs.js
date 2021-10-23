@@ -90,12 +90,12 @@ window.onload = () => {
                         confirm_bt.innerHTML = 'Confirm'
 
                     confirm_bt.addEventListener('click', () => {
-                        if (!Boolean(edit_title.value + edit_artist.value + edit_album.value + edit_genre.value + edit_date.value) + (edit_file.files.length != 0)){
+                        if (!Boolean((edit_title.value + edit_artist.value + edit_album.value + edit_genre.value + edit_date.value) + (edit_file.files.length != 0))){
                             //TODO notify the user that nothing is filled in
                         }
                         else {
                             let change_values = {'title': edit_title.value, 'artist': edit_artist.value, 'album_name': edit_album.value,
-                                'genre': edit_genre.value, 'date_released': edit_date.value, 'song_file': edit_file.files.length};
+                                'genre': edit_genre.value, 'date_released': edit_date.value, 'audio_file': edit_file.files.length};
                             let diff_panel = document.createElement('div');
                             diff_panel.setAttribute('id', 'diff_panel');
                             diff_panel.setAttribute("class", "panel popup");
@@ -115,21 +115,49 @@ window.onload = () => {
                                 changes_made.setAttribute('id', 'diff_table');
                             for(c in change_values){
                                 if(!Boolean(change_values[c])){
+                                    delete change_values[c];
                                     continue;
                                 }
                                 changes_made.insertAdjacentHTML('beforeend', `<tr> <td><b>${c}</b></td> <td>${out.songs[c]}</td> <td>${change_values[c]}</td> </tr>`);
                             }
-                                //changes_made.insertAdjacentHTML('beforeend', '</tr>')
+
                             let accept_bt = document.createElement('button');
                                 accept_bt.innerHTML = 'Accept changes';
                                 accept_bt.classList.add('inside_buttons');
+                                accept_bt.addEventListener('click', async () => {
+
+                                    if ('audio_file' in change_values){
+                                        let reader = new FileReader();
+                                        reader.onload = async event => {
+                                            change_values['audio_file'] = await event.target.result.split(',')[1];
+                                            //update_song(change_values);
+                                            (async v => {
+                                                let response = await fetch('/api/song/' + out.songs.id, {method:'PUT',body:v});
+                                                let r = (await response.json())
+                                                document.getElementById('diff_panel').innerHTML = "<b>" + r.message + "</b>";
+                                                if (r.result == "200"){
+                                                    document.getElementById("blur").removeEventListener('click', go_back_blur);
+                                                    document.getElementById("blur").addEventListener('click', remove_blur);
+                                                }
+                                            })(JSON.stringify(change_values));
+                                        }
+                                        reader.readAsDataURL(edit_file.files[0]);
+                                    }
+                                    else {
+                                        let response = await fetch('/api/song/' + out.songs.id, {method:'PUT',body:JSON.stringify(change_values)});
+                                        let r = (await response.json())
+                                        document.getElementById('diff_panel').innerHTML = "<b>" + r.message + "</b>";
+                                        if (r.result == "200"){
+                                            document.getElementById("blur").removeEventListener('click', go_back_blur);
+                                            document.getElementById("blur").addEventListener('click', remove_blur);
+                                        }
+                                    }
+                                    //let response = await fetch('/api/song/' + out.song.id, {method:'PUT',body:change_values});
+                                });
                             let back_bt = document.createElement('button');
                                 back_bt.innerHTML = 'Cancel';
                                 back_bt.classList.add('inside_buttons');
-                                back_bt.addEventListener('click', () => {
-                                    edit_panel.classList.remove('disappear');
-                                    document.getElementById('diff_panel').outerHTML = "";
-                                });
+                                back_bt.addEventListener('click', go_back_blur);
 
                             diff_panel.append(changes_made, accept_bt, back_bt)
                         }
