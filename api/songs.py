@@ -172,8 +172,12 @@ def songs(app, session, db):
             except ValueError:
                 return {'result': '400', 'message': 'Invalid id'}, 400
 
-            response = ast.literal_eval(request.data.decode())
+            try:
+                response = ast.literal_eval(request.data.decode())
+            except Exception:
+                return {'result': '400', 'message': 'Invalid request'}, 400
             cur = db.cursor()
+            cur.execute("SELECT * FROM songs WHERE id = '{}';".format(song_id))
             song = cur.fetchone()
 
             if not song:
@@ -186,6 +190,9 @@ def songs(app, session, db):
             try:
                 allowed_keys = ['title', 'artist', 'album_name', 'genre',
                                 'date_released', 'audio_file']
+                key_order = ['id', 'artist', 'title', 'fs_filename',
+                             'audio_format', 'genre', 'date_released',
+                             'album_name', 'fs_audio_cover']
                 query = "UPDATE songs SET "
                 changes = []
 
@@ -195,23 +202,25 @@ def songs(app, session, db):
                                 key + ' is not a changable value'}, 400
 
                     if key == 'audio_file':
-                        filename = Config.song_path + song.get('fs_filename')
+                        filename = Config.song_path + song[3]
                         value = base64.b64decode(value)
-                        file = open(Config.song_path + filename, 'wb+')
+                        file = open(filename, 'wb+')
                         file.write(value)
                         file.close()
                         changes.append("File has been changed")
                     else:
                         value = db.converter.escape(value)
-                        query += "{}={}, ".format(key, value)
-                        changes.append(song.get(key) + " -> " + value)
+                        query += "{} = '{}', ".format(key, value)
+                        changes.append(song[key_order.index(key)] +
+                                       " -> " + value)
 
-                query = (query + "WHERE id={};").rstrip(',')
+                query = (query[:-2] + " WHERE id = '{}';".format(song_id))
                 cur.execute(query)
                 db.commit()
                 changes_str = ', '.join(changes)
-                log_msg = "Info for song id:{} have changed: {}".format(song_id, changes_str)
+                log_msg = "Info for song id:{} has changed: {}".format(song_id, changes_str)
                 audit_log(log_msg, session, request)
+                return {'result': '200', 'message': 'Song info has been successfully changed'}, 200
 
             except IOError as err:
                 audit_log("Could not save a file when updating song info: {}".format(str(err)), session, request)
@@ -228,3 +237,5 @@ def songs(app, session, db):
     # TODO verbose audit log for deleting and editing
     # TODO error log as a separate function and a separate file
     # TODO separate access log, for things like getting a cover
+    # TODO an api call for a song preview, make ffmpeg generate a short sample
+    #      from the middle of a song, and serve it as a stream
