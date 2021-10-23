@@ -89,8 +89,10 @@ def songs(app, session, db):
         if ('username' in session and (session['permissions'] & 2) and
            (session['permissions'] & 1)):
 
-            response = ast.literal_eval(request.data.decode())
-
+            try:
+                response = ast.literal_eval(request.data.decode())
+            except Exception:
+                return {'result': '400', 'message': 'Invalid request'}, 400
             try:
                 title = db.converter.escape(response["title"])
                 artist = db.converter.escape(response["artist"])

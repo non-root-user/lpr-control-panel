@@ -1,8 +1,8 @@
+import ast
+import bcrypt
 from flask import abort, request
 from config import Config
 from helper import audit_log
-import bcrypt
-import ast
 
 
 def ponies(app, session, db):
@@ -30,7 +30,10 @@ def ponies(app, session, db):
     @app.route('/api/pony', methods=['POST'])
     def add_user():
         if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
-            response = ast.literal_eval(request.data.decode())
+            try:
+                response = ast.literal_eval(request.data.decode())
+            except:
+                return {'result': '400', 'message': 'Invalid request'}, 400
             try:
                 username = db.converter.escape(response["username"])
                 password = response['password']
@@ -71,7 +74,10 @@ def ponies(app, session, db):
     @app.route('/api/pony', methods=['DELETE'])
     def delete_user():
         if 'username' in session:
-            response = ast.literal_eval(request.data.decode())
+            try:
+                response = ast.literal_eval(request.data.decode())
+            except Exception:
+                return {'result': '400', 'message': 'Invalid request'}, 400
             try:
                 username = db.converter.escape(response["username"])
                 username_low = username.lower()
@@ -88,7 +94,10 @@ def ponies(app, session, db):
     @app.route('/api/pony', methods=['PUT'])
     def modify_user():
         if 'username' in session and (session['permissions'] & 4) and (session['permissions'] & 1):
-            response = ast.literal_eval(request.data.decode())
+            try:
+                response = ast.literal_eval(request.data.decode())
+            except Exception:
+                return {'result': '400', 'message': 'Invalid request'}, 400
             try:
                 username = db.converter.escape(response["username"])
                 permissions = response['permission_level']
@@ -116,7 +125,10 @@ def ponies(app, session, db):
     @app.route('/api/password', methods=['PUT'])
     def change_password():
         if 'username' in session and (session['permissions'] & 1):
-            response = ast.literal_eval(request.data.decode())
+            try:
+                response = ast.literal_eval(request.data.decode())
+            except Exception:
+                return {'result': '400', 'message': 'Invalid request'}, 400
             try:
                 if session['permissions'] & 4:
                     try:
