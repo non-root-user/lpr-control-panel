@@ -1,4 +1,3 @@
-import mysql.connector
 
 def initialize_the_database(db):
     cur = db.cursor()
@@ -15,12 +14,13 @@ def initialize_the_database(db):
         last_login_date     INT(64),
         language_code       VARCHAR(8),
         permission_level    INT(128) NOT NULL DEFAULT 0
-    ); 
+    );
     ''')
     db.commit()
 
-    #This is a legacy database structure. fs_album_cover is not used, instead images are pulled from a separate table.
-    #It's there for backwards compatibility when pulling from an old database.
+    # This is a legacy database structure. fs_album_cover is not used, instead
+    # images are pulled from a separate table.
+    # It's there for backwards compatibility when pulling from an old database.
     cur.execute('''CREATE TABLE IF NOT EXISTS songs (
         id                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         artist              VARCHAR(128) NOT NULL,
@@ -32,18 +32,18 @@ def initialize_the_database(db):
         album_name          VARCHAR(64),
         fs_album_cover      VARCHAR(256),
         is_public           INT(2)
-    ); 
+    );
     ''')
     db.commit()
     cur.execute('''CREATE TABLE IF NOT EXISTS history (
         songID              INT(11) NOT NULL,
-        timestamp           INT(11) NOT NULL    
-    ); 
+        timestamp           INT(11) NOT NULL
+    );
     ''')
     db.commit()
     cur.execute('''CREATE TABLE IF NOT EXISTS albumarts (
         id                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        image               MEDIUMBLOB  
-    ); 
+        image               MEDIUMBLOB
+    );
     ''')
     db.commit()
