@@ -234,9 +234,13 @@ window.onload = () => {
 
     cover_file.onchange = () => {
         if (cover_file.files.length == 0) return;
-        let img_preview = document.createElement('img');
         let [file] = cover_file.files;
+        if(document.contains(document.getElementById('change_cover_preview'))) {
+            document.getElementById('change_cover_preview').remove();
+        }
+        let img_preview = document.createElement('img');
         img_preview.src = URL.createObjectURL(file);
+        img_preview.setAttribute('id', 'change_cover_preview');
         img_preview.style.width = "100%";
         img_preview.style.position = "relative";
         document.getElementById('change_cover').insertBefore(img_preview, cover_bt);
