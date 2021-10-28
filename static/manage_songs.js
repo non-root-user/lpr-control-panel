@@ -220,10 +220,10 @@ window.onload = () => {
         if (!id_cover.value) return;
         if (cover_file.files.length == 0) return;
         let reader = new FileReader();
+        
         reader.onload = async event => {
             let image64 = event.target.result.split(',')[1];
             let img_json = JSON.stringify({'image':image64});
-
             let response = await fetch('/api/song/albumart/' + id_cover.value, {method:'PUT',body:img_json});
             document.getElementById('cover_output').innerHTML = "<b>" + (await response.json()).message + "</b>";
 
@@ -231,6 +231,15 @@ window.onload = () => {
         reader.readAsDataURL(cover_file.files[0]);
 
     }
+
+    cover_file.onchange = () => {
+        if (cover_file.files.length == 0) return;
+        let img_preview = document.createElement('img');
+        const [file] = cover_file.files;
+        img_preview.src = URL.createObjectURL(file);
+        document.getElementById('cover_output').appendChild(img_preview);
+    }
+
     song_bt.onclick = () => {
         if ([add_title.value, add_artist.value, add_album.value, add_genre.value, add_year.value].includes('')) return;
         if (song_file.files.length == 0) return;
