@@ -235,8 +235,10 @@ window.onload = () => {
     cover_file.onchange = () => {
         if (cover_file.files.length == 0) return;
         let img_preview = document.createElement('img');
-        const [file] = cover_file.files;
+        let [file] = cover_file.files;
         img_preview.src = URL.createObjectURL(file);
+        img_preview.style.width = "100%";
+        img_preview.style.position = "relative";
         document.getElementById('cover_output').appendChild(img_preview);
     }
 
