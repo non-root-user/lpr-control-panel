@@ -239,7 +239,7 @@ window.onload = () => {
         img_preview.src = URL.createObjectURL(file);
         img_preview.style.width = "100%";
         img_preview.style.position = "relative";
-        document.getElementById('cover_output').appendChild(img_preview);
+        document.getElementById('change_cover').insertBefore(img_preview, cover_bt);
     }
 
     song_bt.onclick = () => {
