@@ -235,6 +235,7 @@ window.onload = () => {
     cover_file.onchange = () => {
         if (cover_file.files.length == 0) return;
         let [file] = cover_file.files;
+        document.getElementById('cover_output').innerHTML = '';
         if(document.contains(document.getElementById('change_cover_preview'))) {
             document.getElementById('change_cover_preview').remove();
         }
