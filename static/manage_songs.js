@@ -57,7 +57,6 @@ window.onload = () => {
                     var edit_panel = document.createElement('div');
                     edit_panel.setAttribute('id', 'edit_panel');
                     edit_panel.setAttribute("class", "panel popup");
-                    //edit_panel.classList.remove("disappear"); // makes sure the panel is visible by overriding display:none
                     edit_panel.addEventListener('click', (event) => {
                         event.stopPropagation();
                     })
@@ -152,7 +151,6 @@ window.onload = () => {
                                             document.getElementById("blur").addEventListener('click', remove_blur);
                                         }
                                     }
-                                    //let response = await fetch('/api/song/' + out.song.id, {method:'PUT',body:change_values});
                                 });
                             let back_bt = document.createElement('button');
                                 back_bt.innerHTML = 'Cancel';
